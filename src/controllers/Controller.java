@@ -20,11 +20,12 @@ public class Controller implements KeyListener{
 		mainWindow = new MainWindow(this);
 		game = new Game(500, mainWindow.getWidth(), mainWindow.getHeight());
 		game.start();
+		mainWindow.setShootList(game.getList());
+		mainWindow.setPointEnemy(game.getEnemyList());
 		timer = new Timer(10, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				mainWindow.paint();
-				mainWindow.setPointEnemy(game.getEnemyPoint());
 				validate();
 			}
 		});
@@ -34,6 +35,7 @@ public class Controller implements KeyListener{
 	private void validate() {
 		if(mainWindow.validateColition()) {
 			JOptionPane.showMessageDialog(null, "you Died");
+			timer.stop();
 			System.exit(0);
 		}
 	}
@@ -53,7 +55,14 @@ public class Controller implements KeyListener{
 		case KeyEvent.VK_DOWN:
 			down();
 			break;
+		case KeyEvent.VK_P:
+			shoot();
+			break;
 		} 
+	}
+
+	private void shoot() {
+		game.addShoot();
 	}
 
 	private void down() {

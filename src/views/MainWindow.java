@@ -2,8 +2,10 @@ package views;
 
 import java.awt.BorderLayout;
 import java.awt.Point;
-import javax.swing.JFrame;
+import java.awt.Rectangle;
+import java.util.ArrayList;
 
+import javax.swing.JFrame;
 import controllers.Controller;
 
 public class MainWindow extends JFrame{
@@ -24,8 +26,8 @@ public class MainWindow extends JFrame{
 		panelDrawing.setPoint(point);
 	}
 
-	public void setPointEnemy(Point point) {
-		panelDrawing.setEnemyPoint(point);
+	public void setPointEnemy(ArrayList<Rectangle> list) {
+		panelDrawing.setEnemyPoint(list);
 	}
 
 	public Point getPoint() {
@@ -38,5 +40,14 @@ public class MainWindow extends JFrame{
 
 	public boolean validateColition() {
 		return panelDrawing.validation();
+	}
+
+	public void setShoot() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setShootList(ArrayList<Rectangle> list) {
+		panelDrawing.setShoot(list);
 	}
 }
