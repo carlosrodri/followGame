@@ -9,19 +9,32 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import models.Game;
+import persistence.JSONFileManager;
 import views.MainWindow;
 
 public class Controller implements KeyListener{
 	private Game game;
 	private MainWindow mainWindow;
 	private Timer timer;
+	private JSONFileManager jsonFileManager;
 	
 	public Controller() {
+		jsonFileManager = new JSONFileManager(10000);
+		jsonFileManager.start();
 		mainWindow = new MainWindow(this);
-		game = new Game(500, mainWindow.getWidth(), mainWindow.getHeight());
+		game = new Game(200, mainWindow.getWidth(), mainWindow.getHeight());
+//		try {
+//			if(jsonFileManager.readFile() != null) {
+//				game.setEnemyList(jsonFileManager.readFile());
+//			}
+//		} catch (IOException e1) {
+//			e1.printStackTrace();
+//		}
 		game.start();
+		mainWindow.setPoint(game.getPlayer());
 		mainWindow.setShootList(game.getList());
 		mainWindow.setPointEnemy(game.getEnemyList());
+		game.addEnenmy();
 		timer = new Timer(10, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -30,14 +43,20 @@ public class Controller implements KeyListener{
 			}
 		});
 		timer.start();
+		jsonFileManager.setEnemyListDao(game.getEnemyList());
+		
 	}
 	
 	private void validate() {
-		if(mainWindow.validateColition()) {
-			JOptionPane.showMessageDialog(null, "you Died");
-			timer.stop();
-			System.exit(0);
+		game.validate();
+		if(game.validateLevel()) {
+			game.pause();
+			JOptionPane.showMessageDialog(null, "Next Level");
+			game.addEnenmy();
+			game.resume();
 		}
+		game.validateLife();
+		mainWindow.setLife(game.getLife());
 	}
 	
 	@Override
@@ -66,19 +85,19 @@ public class Controller implements KeyListener{
 	}
 
 	private void down() {
-		mainWindow.setPoint(game.moveDown());
+		game.moveDown();
 	}
 
 	private void up() {
-		mainWindow.setPoint(game.moveUp());
+		game.moveUp();
 	}
 
 	private void right() {
-		mainWindow.setPoint(game.moveRigth());
+		game.moveRigth();
 	}
 
 	private void left() {
-		mainWindow.setPoint(game.moveleft());
+		game.moveleft();
 	}
 
 	@Override
