@@ -28,7 +28,7 @@ public class JSONFileManager extends MyThread{
 		JSONParser parser = new JSONParser();  
 		Object obj = null;
 		try {
-			obj = parser.parse(new FileReader(getClass().getResource(ConstantsUI.PATH).toString()));
+			obj = parser.parse(new FileReader(ConstantsUI.PATH+".json"));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}  
@@ -39,10 +39,10 @@ public class JSONFileManager extends MyThread{
 
 			objCyclist = (JSONObject) object;
 
-			JSONObject o = (JSONObject) objCyclist.get("Cyclist");
+			JSONObject o = (JSONObject) objCyclist.get("Enemy");
 
-			list.add(new Rectangle(Integer.parseInt(o.get("x").toString()), Integer.parseInt(o.get("y").toString()), 
-					Integer.parseInt(o.get("width").toString()), Integer.parseInt(o.get("height").toString())));
+			list.add(new Rectangle((int)Double.parseDouble(o.get("x").toString()), (int)Double.parseDouble(o.get("y").toString()), 
+					(int)Double.parseDouble(o.get("width").toString()), (int)Double.parseDouble(o.get("heigth").toString())));
 		}
 		return list;
 	}
@@ -71,7 +71,7 @@ public class JSONFileManager extends MyThread{
 
 		try {
 
-			FileWriter file = new FileWriter(getClass().getResource(path) + ".json", false);
+			FileWriter file = new FileWriter(path + ".json", false);
 			file.write(enemyList.toJSONString());
 			file.flush();
 			file.close();

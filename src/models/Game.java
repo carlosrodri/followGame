@@ -47,7 +47,11 @@ public class Game extends MyThread{
 
 	private void paintEnemy() {
 		for (Rectangle rectangle : enemyList) {
+			if(!(rectangle.getWidth()>50)) {
 			rectangle.setLocation((int)rectangle.getX()-15, (int)rectangle.getY());
+			}else {
+				rectangle.setLocation((int)rectangle.getX()-15, (int)rectangle.getY());
+			}
 		}
 	}
 
@@ -80,7 +84,7 @@ public class Game extends MyThread{
 			}
 			level ++;
 		}else {
-			enemyList.add(new Rectangle(x, randomPositionY(), 100, 100));
+			enemyList.add(new Rectangle(x, randomPositionY(), 200, 200));
 		}
 	}
 	
@@ -105,20 +109,25 @@ public class Game extends MyThread{
 			Rectangle s = shoot.next();
 			for (Iterator<Rectangle> enemy =  enemyList.iterator(); enemy.hasNext();) {
 				Rectangle e = enemy.next();
-				if(s.intersects(e)) {
+				if(s.intersects(e) && e.getWidth() == 50) {
 					enemy.remove();
 				}
 			}
 		}
 	}
 
-	public void validateLife() {
+	public boolean validateLife() {
 		for (Iterator<Rectangle> enemy =  enemyList.iterator(); enemy.hasNext();) {
 			Rectangle e = enemy.next();
 			if(player.intersects(e)) {
 				enemy.remove();
 				quitLife();
 			}
+		}
+		if(life <= 0) {
+			return true;
+		}else {
+			return false;
 		}
 	}
 
@@ -130,8 +139,13 @@ public class Game extends MyThread{
 			return false;
 		}
 	}
-	
+
 	public void setEnemyList(List<Rectangle> enemyList) {
 		this.enemyList = enemyList;
+	}
+
+	public void setDimensions(int width, int height) {
+		this.x = width;
+		this.y = height;
 	}
 }

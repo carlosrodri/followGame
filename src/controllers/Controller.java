@@ -1,9 +1,11 @@
 package controllers;
 
+import java.awt.JobAttributes;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
@@ -21,20 +23,11 @@ public class Controller implements KeyListener{
 	public Controller() {
 		jsonFileManager = new JSONFileManager(10000);
 		jsonFileManager.start();
-		mainWindow = new MainWindow(this);
-		game = new Game(200, mainWindow.getWidth(), mainWindow.getHeight());
-//		try {
-//			if(jsonFileManager.readFile() != null) {
-//				game.setEnemyList(jsonFileManager.readFile());
-//			}
-//		} catch (IOException e1) {
-//			e1.printStackTrace();
-//		}
+		validateLoad();
 		game.start();
 		mainWindow.setPoint(game.getPlayer());
 		mainWindow.setShootList(game.getList());
 		mainWindow.setPointEnemy(game.getEnemyList());
-		game.addEnenmy();
 		timer = new Timer(10, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -47,6 +40,25 @@ public class Controller implements KeyListener{
 		
 	}
 	
+	private void validateLoad() {
+		int option = JOptionPane.showConfirmDialog(null, "do you want load the game?");
+		if(option != 1) {
+			try {
+				game = new Game(200, 0, 0);
+				game.setEnemyList(jsonFileManager.readFile());
+				mainWindow = new MainWindow(this);
+				game.setDimensions(mainWindow.getWidth(), mainWindow.getHeight());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			mainWindow.setPointEnemy(game.getEnemyList());
+		}else {
+			mainWindow = new MainWindow(this);
+			game = new Game(200, mainWindow.getWidth(), mainWindow.getHeight());
+			game.addEnenmy();
+		}
+	}
+
 	private void validate() {
 		game.validate();
 		if(game.validateLevel()) {
@@ -55,7 +67,10 @@ public class Controller implements KeyListener{
 			game.addEnenmy();
 			game.resume();
 		}
-		game.validateLife();
+		if(game.validateLife()) {
+			JOptionPane.showMessageDialog(null, "you lose");
+			System.exit(0);
+		}
 		mainWindow.setLife(game.getLife());
 	}
 	
